@@ -1,24 +1,84 @@
-# README
+### Create Project
+```sh
+rails new rails-api -T --api --database=postgresql
+```
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### Config Postgres
+- start up a postgres container
+```sh
+docker pull postgres
+# single db
+docker run --name testing-pg-db -e POSTGRES_PASSWORD=password -e POSTGRES_DB=ebdb -e POSTGRES_USER=postgres -d -p 5432:5432 postgres
+# remove
+docker stop testing-pg-db && docker rm testing-pg-db
+```
 
-Things you may want to cover:
+## Table Schema and Model
+```sh
+rails g resource contact
+```
+### Migrate: create table
+- go to migration file to modify
+```ruby
+# db/migrate/xxx_create_contacts.rb
+class CreateContacts < ActiveRecord::Migration[6.0]
+  def change
+    create_table :contacts do |t|
+      t.string :first_name
+      t.string :last_name
+      t.string :email
+      t.timestamps
+    end
+  end 
+end
+```
+- apply changes to database
+```sh
+rails db:migrate
+```
 
-* Ruby version
+### Seed: initialize table
+- generate some initial data to table
+```ruby
+Contact.create({
+    first_name: "James",
+    last_name: "Tan",
+    email: "example@app.com"
+})
+```
+- apply to database
+```sh
+rails db:seed
+```
 
-* System dependencies
+### Controller
+> [HTTP Code in Rails](http://www.railsstatuscodes.com/)
+- list items under `/items/`
+```ruby
+# !add V1::
+# !put under controllers/v1
+class V1::ContactsController < ApplicationController
+    def index
+        @contacts = Contact.all
+        render json: @contacts, status: :ok
+    end
+end
+```
+- create item under `/items/`
+- show item under `/item/`
+- update item under `/item/`
+- destroy item under `/item/`
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+### Route
+- add `v1` namespace
+```ruby
+Rails.application.routes.draw do
+  namespace :v1 do
+    resources :contacts
+  end
+end
+```
+- to see all the routes
+```sh
+rails routes
+```
