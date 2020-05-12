@@ -55,12 +55,15 @@ rails db:seed
 > [HTTP Code in Rails](http://www.railsstatuscodes.com/)
 - list items under `/items/`
 ```ruby
-# !add V1::
-# !put under controllers/v1
-class V1::ContactsController < ApplicationController
-    def index
-        @contacts = Contact.all
-        render json: @contacts, status: :ok
+# !put under controllers/api/v1
+module Api
+    module V1
+        class ContactsController < ApplicationController
+            def index
+                @contacts = Contact.all
+                render json: @contacts, status: :ok
+            end
+        end
     end
 end
 ```
@@ -73,10 +76,11 @@ end
 - add `v1` namespace
 ```ruby
 Rails.application.routes.draw do
-  namespace :v1 do
-    resources :contacts
+  namespace :api do
+    namespace :v1 do
+      resources :contacts
+    end
   end
-end
 ```
 - to see all the routes
 ```sh
