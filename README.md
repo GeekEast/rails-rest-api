@@ -17,24 +17,38 @@ docker stop testing-pg-db && docker rm testing-pg-db
 ```sh
 rails g resource contact
 ```
+
 ### Migrate: create table
-- go to migration file to modify
+- enable `uuid` `rails g migration enable_uuid`
+```ruby
+class EnableUuid < ActiveRecord::Migration[6.0]
+  def change
+    enable_extension 'uuid-ossp' unless extension_enabled?('uuid-ossp')
+  end
+end
+```
+- create 1st table: `rails g migration create_contact`
 ```ruby
 # db/migrate/xxx_create_contacts.rb
-class CreateContacts < ActiveRecord::Migration[6.0]
+class CreateContact < ActiveRecord::Migration[6.0]
   def change
-    create_table :contacts do |t|
-      t.string :first_name
-      t.string :last_name
-      t.string :email
-      t.timestamps
+    create_table :contacts, id: :uuid, default: -> { "uuid_generate_v4()" } do |t|
+        t.string :first_name
+        t.string :last_name
+        t.string :email
+  
+        t.timestamps
     end
-  end 
+  end
 end
 ```
 - apply changes to database
 ```sh
 rails db:migrate
+```
+- generate `structure.sql`
+```sh
+rake db:structure:dump
 ```
 
 ### Seed: initialize table
