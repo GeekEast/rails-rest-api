@@ -14,9 +14,27 @@ module Api
             end
 
 
+            def destroy
+                puts params
+                @contact = Contact.where(id: params[:id]).first
+                if @contact.destroy
+                    head(:ok)
+                else
+                    head(:unprocessable_entity)
+                end
+
+            end
+
+            def show
+                @contact = Contact.find params[:id]
+                render json: @contact, status: :ok
+            end
+
+
             private 
             def contact_params
-                # what does this mean?
+                # requires: must have else error
+                # permit: filtering attributes
                 params.require(:contact).permit(:first_name, :last_name, :email)
             end 
         end

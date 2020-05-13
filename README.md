@@ -1,3 +1,5 @@
+- [Active Record Query](https://guides.rubyonrails.org/active_record_querying.html#retrieving-a-single-object)
+- [HTTP Code in Rails](http://www.railsstatuscodes.com/)
 ### Create Project
 ```sh
 rails new rails-api -T --api --database=postgresql
@@ -66,7 +68,6 @@ rails db:seed
 ```
 
 ### Controller
-> [HTTP Code in Rails](http://www.railsstatuscodes.com/)
 - list items under `/items/`
 ```ruby
 # !put under controllers/api/v1
